@@ -108,7 +108,7 @@ body {
 
 .mode-selection {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 1.5rem;
 }
 
@@ -129,6 +129,10 @@ body {
 
 .mode-card:nth-child(2) {
     background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.mode-card:nth-child(3) {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
 }
 
 .mode-icon {
@@ -529,6 +533,108 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Sync Styles */
+.sync-section {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.session-input {
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 10px;
+    width: 200px;
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+}
+
+.btn-success:hover {
+    background: linear-gradient(45deg, #218838, #1ea085);
+}
+
+.live-results-section {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    margin: 20px 0;
+}
+
+.live-results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.live-result-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.live-result-item.winner {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #333;
+    font-weight: bold;
+}
+
+.live-result-item .rank {
+    font-size: 1.2em;
+    min-width: 30px;
+}
+
+.live-result-item .name {
+    flex: 1;
+    text-align: left;
+    margin-left: 10px;
+}
+
+.live-result-item .score,
+.live-result-item .percentage {
+    font-weight: bold;
+    min-width: 60px;
+}
+
+.live-result-item .time {
+    font-size: 0.8em;
+    opacity: 0.7;
+    min-width: 80px;
+}
+
+.sync-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    max-width: 300px;
+}
+
+.sync-notification.show {
+    transform: translateX(0);
+}
+
 @media (max-width: 768px) {
     .main-content {
         padding: 1rem;
@@ -536,6 +642,27 @@ body {
     
     .mode-selection {
         grid-template-columns: 1fr;
+    }
+    
+    .live-result-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 5px;
+    }
+    
+    .live-result-item .name {
+        margin-left: 0;
+    }
+    
+    .sync-notification {
+        right: 10px;
+        left: 10px;
+        transform: translateY(-100px);
+        max-width: none;
+    }
+    
+    .sync-notification.show {
+        transform: translateY(0);
     }
     
     .stats-bar {
