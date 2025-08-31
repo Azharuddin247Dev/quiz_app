@@ -44,6 +44,16 @@
                         <h3>Multiplayer</h3>
                         <p>Challenge a friend</p>
                     </div>
+                    <div class="mode-card" onclick="selectMode('sync')">
+                        <div class="mode-icon">🌐</div>
+                        <h3>Sync Mode</h3>
+                        <p>Share results across devices</p>
+                    </div>
+                </div>
+                <div id="sync-options" class="sync-section" style="display: none;">
+                    <h3>Join Existing Session</h3>
+                    <input type="text" id="session-id" placeholder="Enter Session ID" class="session-input">
+                    <button onclick="joinSyncSession()" class="btn btn-primary">Join Session</button>
                 </div>
             </div>
             
@@ -123,9 +133,11 @@
                         <div id="player-scores" class="player-scores-grid"></div>
                     </div>
                     <div id="leaderboard" class="leaderboard-section"></div>
+                    <div id="live-results" class="live-results-section"></div>
                     <div class="result-actions">
                         <button onclick="restartQuiz()" class="btn btn-primary">🔄 Play Again</button>
                         <button onclick="shareResults()" class="btn btn-secondary">📤 Share</button>
+                        <button onclick="createSyncSession()" class="btn btn-success">🔗 Create Sync Session</button>
                     </div>
                 </div>
             </div>
@@ -147,6 +159,7 @@
         </div>
     </div>
     
+    <script src="sync.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
