@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster Pro - Interactive Quiz App</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#667eea">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <h1>🧠 QuizMaster Pro</h1>
+                <p>Test Your Knowledge</p>
+            </div>
+            <div class="stats-bar">
+                <div class="stat">
+                    <span class="stat-label">Total Questions</span>
+                    <span class="stat-value">30</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Categories</span>
+                    <span class="stat-value">5</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div id="mode-container" class="screen">
+                <div class="welcome-section">
+                    <h2>Welcome to QuizMaster Pro!</h2>
+                    <p>Challenge yourself with questions from various categories</p>
+                </div>
+                <div class="mode-selection">
+                    <div class="mode-card" onclick="selectMode('single')">
+                        <div class="mode-icon">👤</div>
+                        <h3>Single Player</h3>
+                        <p>Test your knowledge solo</p>
+                    </div>
+                    <div class="mode-card" onclick="selectMode('multi')">
+                        <div class="mode-icon">👥</div>
+                        <h3>Multiplayer</h3>
+                        <p>Challenge a friend</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="name-container" class="screen" style="display: none;">
+                <div class="setup-form">
+                    <h2 id="mode-title">Enter Your Name</h2>
+                    <div id="single-player" style="display: none;">
+                        <input type="text" id="player-name" placeholder="Your Name" maxlength="20" class="player-input">
+                    </div>
+                    <div id="multi-player" style="display: none;">
+                        <input type="text" id="player1-name" placeholder="Player 1 Name" maxlength="20" class="player-input">
+                        <input type="text" id="player2-name" placeholder="Player 2 Name" maxlength="20" class="player-input">
+                    </div>
+                    <div class="settings-section">
+                        <div class="setting-group">
+                            <label for="question-count">Number of Questions:</label>
+                            <select id="question-count" class="setting-select">
+                                <option value="5">5 Questions</option>
+                                <option value="10" selected>10 Questions</option>
+                                <option value="15">15 Questions</option>
+                                <option value="20">20 Questions</option>
+                                <option value="30">30 Questions (All)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="button-group">
+                        <button onclick="startQuiz()" class="btn btn-primary">Start Quiz</button>
+                        <button onclick="goBack()" class="btn btn-secondary">Back</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="quiz-container" class="screen" style="display: none;">
+                <div class="quiz-header">
+                    <div class="progress-section">
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill"></div>
+                        </div>
+                        <span id="question-counter" class="question-counter">1 / 10</span>
+                    </div>
+                    <div id="current-player" class="current-player" style="display: none;"></div>
+                </div>
+                
+                <div class="timer-section">
+                    <div id="timer-container" class="timer-container">
+                        <div id="timer-bar" class="timer-bar"></div>
+                        <span id="timer-text" class="timer-text">30</span>
+                    </div>
+                </div>
+                
+                <div class="question-section">
+                    <h2 id="question" class="question-text"></h2>
+                    <div id="options" class="options-grid"></div>
+                </div>
+                
+                <div class="quiz-actions">
+                    <button onclick="pauseQuiz()" class="btn btn-secondary" id="pause-btn">⏸️ Pause</button>
+                    <button onclick="quitQuiz()" class="btn btn-danger" id="quit-btn">❌ Quit</button>
+                </div>
+            </div>
+            
+            <div id="result-container" class="screen" style="display: none;">
+                <div class="results-section">
+                    <h2 class="results-title">🎉 Quiz Complete!</h2>
+                    <div id="single-result" class="result-card" style="display: none;">
+                        <div class="score-display">
+                            <div id="score-circle" class="score-circle">
+                                <span id="score-percentage">0%</span>
+                            </div>
+                            <p id="player-info" class="player-info"></p>
+                            <p id="score" class="score-details"></p>
+                        </div>
+                        <div id="performance-badge" class="performance-badge"></div>
+                    </div>
+                    <div id="multi-result" class="result-card" style="display: none;">
+                        <p id="winner-info" class="winner-announcement"></p>
+                        <div id="player-scores" class="player-scores-grid"></div>
+                    </div>
+                    <div id="leaderboard" class="leaderboard-section"></div>
+                    <div class="result-actions">
+                        <button onclick="restartQuiz()" class="btn btn-primary">🔄 Play Again</button>
+                        <button onclick="shareResults()" class="btn btn-secondary">📤 Share</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2024 QuizMaster Pro. Built with ❤️</p>
+        </footer>
+    </div>
+    
+    <div id="pause-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Quiz Paused</h3>
+            <p>Take your time! Resume when ready.</p>
+            <div class="modal-actions">
+                <button onclick="resumeQuiz()" class="btn btn-primary">Resume</button>
+                <button onclick="quitQuiz()" class="btn btn-danger">Quit Quiz</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
