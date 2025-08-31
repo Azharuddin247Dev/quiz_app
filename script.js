@@ -166,6 +166,8 @@ let playerScores = [];
 let usedQuestions = new Set();
 let isPaused = false;
 let currentQuestionData = null;
+let syncSession = null;
+let isSyncMode = false;
 
 function loadQuestion() {
     let question;
@@ -334,15 +336,31 @@ function restartQuiz() {
     currentQuestionData = null;
     clearInterval(timerInterval);
     
+    // Stop sync listening
+    if (quizSync) {
+        quizSync.stopListening();
+    }
+    syncSession = null;
+    isSyncMode = false;
+    
     document.getElementById('result-container').style.display = 'none';
     document.getElementById('mode-container').style.display = 'block';
+    document.getElementById('sync-options').style.display = 'none';
     document.getElementById('player-name').value = '';
     document.getElementById('player1-name').value = '';
     document.getElementById('player2-name').value = '';
+    document.getElementById('session-id').value = '';
 }
 
 function selectMode(mode) {
     gameMode = mode;
+    
+    if (mode === 'sync') {
+        document.getElementById('sync-options').style.display = 'block';
+        isSyncMode = true;
+        return;
+    }
+    
     document.getElementById('mode-container').style.display = 'none';
     document.getElementById('name-container').style.display = 'block';
     
@@ -500,6 +518,16 @@ function saveScore() {
     scores.splice(10);
     
     localStorage.setItem('quizScores', JSON.stringify(scores));
+    
+    // Submit to sync session if active
+    if (syncSession && isSyncMode) {
+        quizSync.submitResults({
+            score: score,
+            total: totalQuestions,
+            percentage: Math.round((score / totalQuestions) * 100),
+            answers: [] // Could track individual answers if needed
+        });
+    }
 }
 
 function displayLeaderboard() {
@@ -518,3 +546,80 @@ function displayLeaderboard() {
     
     leaderboard.innerHTML = html;
 }
+
+// Sync-related functions
+async function createSyncSession() {
+    try {
+        syncSession = await quizSync.createSession();
+        const shareLink = quizSync.getShareableLink();
+        
+        const message = `Quiz Sync Session Created!\n\nSession ID: ${syncSession}\n\nShare this link: ${shareLink}\n\nOthers can join using the Session ID or by clicking the link.`;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Join My Quiz Session',
+                text: `Join my quiz session with ID: ${syncSession}`,
+                url: shareLink
+            });
+        } else {
+            navigator.clipboard.writeText(shareLink).then(() => {
+                alert(message + '\n\nLink copied to clipboard!');
+            }).catch(() => {
+                alert(message);
+            });
+        }
+        
+        // Start listening for results
+        quizSync.startListening();
+        
+    } catch (error) {
+        alert('Failed to create sync session. Please try again.');
+        console.error('Sync session creation failed:', error);
+    }
+}
+
+async function joinSyncSession() {
+    const sessionId = document.getElementById('session-id').value.trim().toUpperCase();
+    if (!sessionId) {
+        alert('Please enter a Session ID');
+        return;
+    }
+    
+    try {
+        await quizSync.joinSession(sessionId);
+        syncSession = sessionId;
+        isSyncMode = true;
+        
+        alert(`Successfully joined session: ${sessionId}`);
+        
+        // Switch to single player mode for the quiz
+        gameMode = 'single';
+        document.getElementById('mode-container').style.display = 'none';
+        document.getElementById('name-container').style.display = 'block';
+        document.getElementById('mode-title').textContent = 'Enter Your Name (Sync Mode)';
+        document.getElementById('single-player').style.display = 'block';
+        document.getElementById('multi-player').style.display = 'none';
+        
+    } catch (error) {
+        alert('Failed to join session. Please check the Session ID.');
+        console.error('Failed to join sync session:', error);
+    }
+}
+
+// Check for session ID in URL on page load
+window.addEventListener('load', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session');
+    
+    if (sessionId) {
+        document.getElementById('session-id').value = sessionId;
+        selectMode('sync');
+        
+        // Auto-show join dialog
+        setTimeout(() => {
+            if (confirm(`Join quiz session: ${sessionId}?`)) {
+                joinSyncSession();
+            }
+        }, 500);
+    }
+});
