@@ -1,153 +1,153 @@
 const questions = [
     {
-        question: "What is the national animal of India?",
-        options: ["Elephant", "Lion", "Tiger", "Leopard"],
+        question: "What is the capital of India?",
+        options: ["Mumbai", "New Delhi", "Kolkata", "Chennai"],
+        correct: 1
+    },
+    {
+        question: "Which river is known as the 'Ganga of the South'?",
+        options: ["Krishna", "Godavari", "Kaveri", "Narmada"],
         correct: 2
     },
     {
-        question: "Which Indian state is known as the 'Land of Rising Sun'?",
-        options: ["Sikkim", "Arunachal Pradesh", "Assam", "Nagaland"],
+        question: "Who is known as the 'Father of the Nation' in India?",
+        options: ["Jawaharlal Nehru", "Mahatma Gandhi", "Sardar Patel", "Dr. APJ Abdul Kalam"],
         correct: 1
     },
     {
-        question: "Who was the first President of India?",
-        options: ["Dr. Rajendra Prasad", "Dr. S. Radhakrishnan", "Zakir Hussain", "V. V. Giri"],
-        correct: 0
-    },
-    {
-        question: "Which is the longest river in India?",
-        options: ["Yamuna", "Godavari", "Ganga", "Brahmaputra"],
+        question: "In which year did India gain independence?",
+        options: ["1945", "1946", "1947", "1948"],
         correct: 2
     },
     {
-        question: "What is the national flower of India?",
-        options: ["Rose", "Lotus", "Sunflower", "Marigold"],
-        correct: 1
-    },
-    {
-        question: "Which Indian state has the highest population?",
-        options: ["Maharashtra", "Uttar Pradesh", "Bihar", "West Bengal"],
-        correct: 1
-    },
-    {
-        question: "Who was the first Prime Minister of India?",
-        options: ["Mahatma Gandhi", "Sardar Patel", "Jawaharlal Nehru", "Rajendra Prasad"],
+        question: "Which is the largest state in India by area?",
+        options: ["Uttar Pradesh", "Madhya Pradesh", "Rajasthan", "Maharashtra"],
         correct: 2
     },
     {
-        question: "Which Indian state is famous for the dance form Kathakali?",
-        options: ["Tamil Nadu", "Kerala", "Odisha", "Karnataka"],
+        question: "What is the national bird of India?",
+        options: ["Eagle", "Peacock", "Parrot", "Sparrow"],
         correct: 1
     },
     {
-        question: "In which city is the Gateway of India located?",
-        options: ["Mumbai", "Kolkata", "Chennai", "Delhi"],
-        correct: 0
-    },
-    {
-        question: "Which is the smallest state in India by area?",
-        options: ["Goa", "Sikkim", "Tripura", "Nagaland"],
-        correct: 0
-    },
-    {
-        question: "Who was the first woman Prime Minister of India?",
-        options: ["Sarojini Naidu", "Indira Gandhi", "Pratibha Patil", "Sonia Gandhi"],
-        correct: 1
-    },
-    {
-        question: "Which state is known as the 'Spice Garden of India'?",
-        options: ["Kerala", "Assam", "Tamil Nadu", "Karnataka"],
-        correct: 0
-    },
-    {
-        question: "Which Indian monument is also called the 'Symbol of Love'?",
-        options: ["Qutub Minar", "Charminar", "Taj Mahal", "Red Fort"],
+        question: "Which Indian city is known as the 'Silicon Valley of India'?",
+        options: ["Hyderabad", "Pune", "Bangalore", "Chennai"],
         correct: 2
     },
     {
-        question: "Who was the first Indian to win a Nobel Prize?",
-        options: ["C. V. Raman", "Rabindranath Tagore", "Mother Teresa", "Amartya Sen"],
-        correct: 1
-    },
-    {
-        question: "What is the national sport of India?",
-        options: ["Hockey", "Cricket", "Kabaddi", "Football"],
+        question: "Who wrote the Indian National Anthem?",
+        options: ["Rabindranath Tagore", "Bankim Chandra Chatterjee", "Sarojini Naidu", "Subhas Chandra Bose"],
         correct: 0
     },
     {
-        question: "Which is the largest union territory of India?",
-        options: ["Delhi", "Puducherry", "Jammu and Kashmir", "Ladakh"],
+        question: "Which is the highest mountain peak in India?",
+        options: ["Kanchenjunga", "Nanda Devi", "Kamet", "Saltoro Kangri"],
+        correct: 0
+    },
+    {
+        question: "What is the currency of India?",
+        options: ["Dollar", "Pound", "Rupee", "Euro"],
+        correct: 2
+    },
+    {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Venus", "Mars", "Jupiter", "Saturn"],
+        correct: 1
+    },
+    {
+        question: "What is the largest ocean on Earth?",
+        options: ["Atlantic", "Indian", "Arctic", "Pacific"],
         correct: 3
     },
     {
-        question: "Who is known as the Iron Man of India?",
-        options: ["Jawaharlal Nehru", "Sardar Vallabhbhai Patel", "Subhas Chandra Bose", "B. R. Ambedkar"],
+        question: "Who painted the Mona Lisa?",
+        options: ["Vincent van Gogh", "Leonardo da Vinci", "Pablo Picasso", "Michelangelo"],
         correct: 1
     },
     {
-        question: "Which is the national aquatic animal of India?",
-        options: ["Dolphin", "Shark", "Crocodile", "Turtle"],
-        correct: 0
-    },
-    {
-        question: "Where is the Sun Temple located?",
-        options: ["Konark", "Puri", "Madurai", "Hampi"],
-        correct: 0
-    },
-    {
-        question: "Who was the first Indian astronaut to go into space?",
-        options: ["Rakesh Sharma", "Kalpana Chawla", "Sunita Williams", "Vikram Sarabhai"],
-        correct: 0
-    },
-    {
-        question: "Which Indian state is famous for tea plantations?",
-        options: ["Kerala", "Assam", "Punjab", "Gujarat"],
-        correct: 1
-    },
-    {
-        question: "Who is known as the Missile Man of India?",
-        options: ["Dr. Vikram Sarabhai", "Dr. A. P. J. Abdul Kalam", "Dr. Homi Bhabha", "Dr. C. V. Raman"],
-        correct: 1
-    },
-    {
-        question: "Which is the highest civilian award in India?",
-        options: ["Padma Shri", "Padma Bhushan", "Padma Vibhushan", "Bharat Ratna"],
-        correct: 3
-    },
-    {
-        question: "Which Indian state is called the 'Land of Five Rivers'?",
-        options: ["Haryana", "Punjab", "Rajasthan", "Gujarat"],
-        correct: 1
-    },
-    {
-        question: "Which Mughal emperor built the Red Fort in Delhi?",
-        options: ["Akbar", "Aurangzeb", "Shah Jahan", "Babur"],
+        question: "What is the chemical symbol for gold?",
+        options: ["Go", "Gd", "Au", "Ag"],
         correct: 2
     },
     {
-        question: "Which Indian festival is known as the 'Festival of Lights'?",
-        options: ["Holi", "Diwali", "Eid", "Navratri"],
+        question: "Which country is known as the Land of the Rising Sun?",
+        options: ["China", "Japan", "South Korea", "Thailand"],
         correct: 1
     },
     {
-        question: "Where is the Indian Space Research Organisation (ISRO) headquartered?",
-        options: ["Chennai", "Bengaluru", "Hyderabad", "New Delhi"],
+        question: "What is the smallest country in the world?",
+        options: ["Monaco", "San Marino", "Vatican City", "Liechtenstein"],
+        correct: 2
+    },
+    {
+        question: "Who invented the telephone?",
+        options: ["Thomas Edison", "Alexander Graham Bell", "Nikola Tesla", "Benjamin Franklin"],
         correct: 1
     },
     {
-        question: "Which Indian freedom fighter gave the slogan 'Give me blood, and I shall give you freedom'?",
-        options: ["Bhagat Singh", "Subhas Chandra Bose", "Mahatma Gandhi", "Lala Lajpat Rai"],
+        question: "What is the hardest natural substance on Earth?",
+        options: ["Gold", "Iron", "Diamond", "Platinum"],
+        correct: 2
+    },
+    {
+        question: "Which gas makes up most of Earth's atmosphere?",
+        options: ["Oxygen", "Carbon Dioxide", "Hydrogen", "Nitrogen"],
+        correct: 3
+    },
+    {
+        question: "In which year did World War II end?",
+        options: ["1944", "1945", "1946", "1947"],
         correct: 1
     },
     {
-        question: "Which Indian city is known as the 'Pink City'?",
-        options: ["Udaipur", "Jaipur", "Jodhpur", "Bikaner"],
+        question: "What is the capital of Australia?",
+        options: ["Sydney", "Melbourne", "Canberra", "Perth"],
+        correct: 2
+    },
+    {
+        question: "Which element has the chemical symbol 'O'?",
+        options: ["Osmium", "Oxygen", "Oganesson", "Olivine"],
         correct: 1
     },
     {
-        question: "Who wrote the book 'Discovery of India'?",
-        options: ["Mahatma Gandhi", "Jawaharlal Nehru", "Rabindranath Tagore", "Sardar Patel"],
+        question: "Who wrote 'Romeo and Juliet'?",
+        options: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"],
         correct: 1
+    },
+    {
+        question: "What is the longest river in the world?",
+        options: ["Amazon", "Nile", "Mississippi", "Yangtze"],
+        correct: 1
+    },
+    {
+        question: "Which continent is the largest by area?",
+        options: ["Africa", "North America", "Asia", "Europe"],
+        correct: 2
+    },
+    {
+        question: "What is the speed of light in vacuum?",
+        options: ["300,000 km/s", "150,000 km/s", "450,000 km/s", "600,000 km/s"],
+        correct: 0
+    },
+    {
+        question: "Who developed the theory of relativity?",
+        options: ["Isaac Newton", "Albert Einstein", "Galileo Galilei", "Stephen Hawking"],
+        correct: 1
+    },
+    {
+        question: "What is the largest mammal in the world?",
+        options: ["African Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
+        correct: 1
+    },
+    {
+        question: "Which programming language is known for web development?",
+        options: ["Python", "C++", "JavaScript", "Assembly"],
+        correct: 2
+    },
+    {
+        question: "What does 'WWW' stand for?",
+        options: ["World Wide Web", "World Wide Window", "World Web Works", "Wide World Web"],
+        correct: 0
     }
 ];
 
@@ -520,13 +520,19 @@ function saveScore() {
     localStorage.setItem('quizScores', JSON.stringify(scores));
     
     // Submit to sync session if active
-    if (syncSession && isSyncMode) {
+    if (syncSession && isSyncMode && quizSync) {
+        console.log('Submitting results to sync session:', syncSession);
         quizSync.submitResults({
             score: score,
             total: totalQuestions,
             percentage: Math.round((score / totalQuestions) * 100),
-            answers: [] // Could track individual answers if needed
+            answers: []
         });
+        
+        // Update display after a short delay
+        setTimeout(() => {
+            quizSync.updateResultsDisplay();
+        }, 500);
     }
 }
 
@@ -547,9 +553,65 @@ function displayLeaderboard() {
     leaderboard.innerHTML = html;
 }
 
+// Host authentication
+function showHostLogin() {
+    document.getElementById('host-login-modal').style.display = 'flex';
+    document.getElementById('host-userid').value = '';
+    document.getElementById('host-password').value = '';
+    document.getElementById('host-userid').focus();
+}
+
+function closeHostLogin() {
+    document.getElementById('host-login-modal').style.display = 'none';
+}
+
+function authenticateHost() {
+    const userid = document.getElementById('host-userid').value.trim();
+    const password = document.getElementById('host-password').value;
+    
+    // Check credentials
+    if (userid === 'Azhar247' && password === 'Raone#1') {
+        closeHostLogin();
+        
+        // Check if we're on results screen or sync mode screen
+        const resultContainer = document.getElementById('result-container');
+        const modeContainer = document.getElementById('mode-container');
+        
+        if (resultContainer.style.display !== 'none') {
+            // On results screen - create session with existing results
+            createSyncSession();
+        } else {
+            // On sync mode screen - go to quiz first
+            alert('✅ Host authenticated! Now take a quiz to create a session.');
+            gameMode = 'single';
+            isSyncMode = true;
+            document.getElementById('mode-container').style.display = 'none';
+            document.getElementById('name-container').style.display = 'block';
+            document.getElementById('mode-title').textContent = 'Enter Your Name (Host Mode)';
+            document.getElementById('single-player').style.display = 'block';
+            document.getElementById('multi-player').style.display = 'none';
+        }
+    } else {
+        alert('❌ Invalid credentials! Only authorized users can create sync sessions.');
+        document.getElementById('host-userid').value = '';
+        document.getElementById('host-password').value = '';
+        document.getElementById('host-userid').focus();
+    }
+}
+
 // Sync-related functions
 async function createSyncSession() {
     try {
+        // First submit current user's results to the session
+        if (quizSync && playerName && typeof score !== 'undefined') {
+            await quizSync.submitResults({
+                score: score,
+                total: totalQuestions,
+                percentage: Math.round((score / totalQuestions) * 100),
+                answers: []
+            });
+        }
+        
         syncSession = await quizSync.createSession();
         const shareLink = quizSync.getShareableLink();
         
@@ -569,8 +631,10 @@ async function createSyncSession() {
             });
         }
         
-        // Start listening for results
-        quizSync.startListening();
+        // Show live results immediately
+        setTimeout(() => {
+            quizSync.updateResultsDisplay();
+        }, 500);
         
     } catch (error) {
         alert('Failed to create sync session. Please try again.');
@@ -601,7 +665,7 @@ async function joinSyncSession() {
         document.getElementById('multi-player').style.display = 'none';
         
     } catch (error) {
-        alert('Failed to join session. Please check the Session ID.');
+        alert('Failed to join session. Please check the Session ID and make sure the session exists.');
         console.error('Failed to join sync session:', error);
     }
 }
@@ -612,14 +676,36 @@ window.addEventListener('load', () => {
     const sessionId = urlParams.get('session');
     
     if (sessionId) {
-        document.getElementById('session-id').value = sessionId;
+        document.getElementById('session-id').value = sessionId.toUpperCase();
         selectMode('sync');
         
         // Auto-show join dialog
         setTimeout(() => {
-            if (confirm(`Join quiz session: ${sessionId}?`)) {
+            if (confirm(`Join quiz session: ${sessionId.toUpperCase()}?`)) {
                 joinSyncSession();
             }
         }, 500);
     }
+});
+
+// Debug function to check session data
+function debugSession() {
+    if (syncSession) {
+        const sessionData = localStorage.getItem(`quiz_session_${syncSession}`);
+        console.log('Current session data:', JSON.parse(sessionData || '{}'));
+    } else {
+        console.log('No active session');
+    }
+}
+
+// Handle Enter key in auth inputs
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const modal = document.getElementById('host-login-modal');
+            if (modal && modal.style.display === 'flex') {
+                authenticateHost();
+            }
+        }
+    });
 });
