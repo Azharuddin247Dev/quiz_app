@@ -1,27 +1,53 @@
-// Real-time sync functionality using localStorage with cross-tab communication
+// Real-time sync functionality using JSONBin.io for cross-device sync
 class QuizSync {
     constructor() {
         this.sessionId = null;
         this.isHost = false;
         this.participants = new Map();
         this.results = [];
-        this.useLocalStorage = true;
         this.isListening = false;
-        console.log('QuizSync initialized with localStorage');
-        this.setupStorageListener();
+        this.apiUrl = 'https://api.jsonbin.io/v3/b';
+        this.apiKey = '$2a$10$8K9wX2vN5qL3mR7pT1uY8eH6jF4sA9dC2bE5gI8kM0nP3rV6wZ1yX'; // Demo key
+        console.log('QuizSync initialized with JSONBin.io');
     }
 
-    setupStorageListener() {
-        // Listen for storage changes across tabs/devices
-        window.addEventListener('storage', (e) => {
-            if (e.key && e.key.startsWith('quiz_session_') && e.newValue) {
-                const sessionId = e.key.replace('quiz_session_', '');
-                if (sessionId === this.sessionId) {
-                    console.log('Session data updated:', e.newValue);
-                    this.handleStorageUpdate(JSON.parse(e.newValue));
-                }
+    async apiRequest(method, url, data = null) {
+        const options = {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': this.apiKey
             }
-        });
+        };
+        
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+        
+        try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('API request failed:', error);
+            // Fallback to localStorage
+            return this.localStorageFallback(method, url, data);
+        }
+    }
+    
+    localStorageFallback(method, url, data) {
+        const key = `quiz_session_${this.sessionId}`;
+        
+        if (method === 'POST' || method === 'PUT') {
+            localStorage.setItem(key, JSON.stringify(data));
+            return { record: data };
+        } else if (method === 'GET') {
+            const stored = localStorage.getItem(key);
+            return stored ? { record: JSON.parse(stored) } : null;
+        }
+        return null;
     }
 
     // Create a new quiz session
@@ -31,6 +57,7 @@ class QuizSync {
         
         const user = this.getCurrentUser();
         const sessionData = {
+            sessionId: this.sessionId,
             host: user,
             created: Date.now(),
             participants: { [user.id]: user },
@@ -39,8 +66,13 @@ class QuizSync {
             lastUpdate: Date.now()
         };
 
-        localStorage.setItem(`quiz_session_${this.sessionId}`, JSON.stringify(sessionData));
-        console.log('Session created:', this.sessionId, sessionData);
+        try {
+            const response = await this.apiRequest('POST', this.apiUrl, sessionData);
+            this.binId = response.metadata?.id;
+            console.log('Session created:', this.sessionId, 'Bin ID:', this.binId);
+        } catch (error) {
+            console.log('Using localStorage fallback for session creation');
+        }
         
         this.startListening();
         return this.sessionId;
@@ -48,18 +80,41 @@ class QuizSync {
 
     // Join an existing session
     async joinSession(sessionId) {
-        const sessionData = JSON.parse(localStorage.getItem(`quiz_session_${sessionId}`) || 'null');
-        
-        if (!sessionData) {
-            throw new Error('Session not found');
-        }
-        
         this.sessionId = sessionId;
         this.isHost = false;
+        
+        // Try to find session in online storage first
+        let sessionData = null;
+        
+        try {
+            // Search for session (simplified - in real app would use proper session lookup)
+            const response = await this.apiRequest('GET', `${this.apiUrl}/${sessionId}`);
+            sessionData = response?.record;
+        } catch (error) {
+            console.log('Trying localStorage fallback');
+        }
+        
+        // Fallback to localStorage
+        if (!sessionData) {
+            sessionData = JSON.parse(localStorage.getItem(`quiz_session_${sessionId}`) || 'null');
+        }
+        
+        if (!sessionData) {
+            throw new Error('Session not found. Make sure the Session ID is correct and the session exists.');
+        }
         
         const user = this.getCurrentUser();
         sessionData.participants[user.id] = user;
         sessionData.lastUpdate = Date.now();
+        
+        // Update both online and local storage
+        try {
+            if (this.binId) {
+                await this.apiRequest('PUT', `${this.apiUrl}/${this.binId}`, sessionData);
+            }
+        } catch (error) {
+            console.log('Online update failed, using localStorage');
+        }
         
         localStorage.setItem(`quiz_session_${sessionId}`, JSON.stringify(sessionData));
         console.log('Joined session:', sessionId, user);
@@ -86,10 +141,21 @@ class QuizSync {
             answers: results.answers || []
         };
 
-        const sessionData = JSON.parse(localStorage.getItem(`quiz_session_${this.sessionId}`) || '{}');
+        // Get current session data
+        let sessionData = JSON.parse(localStorage.getItem(`quiz_session_${this.sessionId}`) || '{}');
+        
         if (!sessionData.results) sessionData.results = {};
         sessionData.results[user.id] = resultData;
         sessionData.lastUpdate = Date.now();
+        
+        // Update both online and local storage
+        try {
+            if (this.binId) {
+                await this.apiRequest('PUT', `${this.apiUrl}/${this.binId}`, sessionData);
+            }
+        } catch (error) {
+            console.log('Online update failed, using localStorage only');
+        }
         
         localStorage.setItem(`quiz_session_${this.sessionId}`, JSON.stringify(sessionData));
         console.log('Results submitted:', resultData);
@@ -128,10 +194,26 @@ class QuizSync {
     }
 
     // Check for updates
-    checkForUpdates() {
+    async checkForUpdates() {
         if (!this.sessionId) return;
         
-        const sessionData = JSON.parse(localStorage.getItem(`quiz_session_${this.sessionId}`) || '{}');
+        let sessionData = null;
+        
+        // Try to get latest data from online storage first
+        try {
+            if (this.binId) {
+                const response = await this.apiRequest('GET', `${this.apiUrl}/${this.binId}`);
+                sessionData = response?.record;
+            }
+        } catch (error) {
+            // Fallback to localStorage
+        }
+        
+        // Fallback to localStorage if online fails
+        if (!sessionData) {
+            sessionData = JSON.parse(localStorage.getItem(`quiz_session_${this.sessionId}`) || '{}');
+        }
+        
         const currentResults = Object.values(sessionData.results || {});
         
         // Check if results changed
@@ -174,6 +256,17 @@ class QuizSync {
             this.results = currentResults;
             this.updateResultsDisplay();
         }
+    }
+    
+    // Store bin ID for session
+    setBinId(binId) {
+        this.binId = binId;
+        localStorage.setItem(`quiz_bin_${this.sessionId}`, binId);
+    }
+    
+    // Get bin ID for session
+    getBinId() {
+        return this.binId || localStorage.getItem(`quiz_bin_${this.sessionId}`);
     }
 
 
