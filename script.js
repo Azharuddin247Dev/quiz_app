@@ -5,7 +5,7 @@ const questions = [
         correct: 1
     },
     {
-        question: "Which river is known as the 'Ganga of the South'?",
+        question: "Which river is known as the 'Ganga of the South' as per Holiness?",
         options: ["Krishna", "Godavari", "Kaveri", "Narmada"],
         correct: 2
     },
@@ -35,7 +35,7 @@ const questions = [
         correct: 2
     },
     {
-        question: "Who wrote the Indian National Anthem?",
+        question: "Who wrote the Indian National Song?",
         options: ["Rabindranath Tagore", "Bankim Chandra Chatterjee", "Sarojini Naidu", "Subhas Chandra Bose"],
         correct: 0
     },
