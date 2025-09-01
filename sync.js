@@ -1,31 +1,27 @@
-// Real-time sync functionality using Firebase
+// Real-time sync functionality using localStorage with cross-tab communication
 class QuizSync {
     constructor() {
         this.sessionId = null;
         this.isHost = false;
         this.participants = new Map();
         this.results = [];
-        this.firebaseConfig = {
-            // Using a demo Firebase config - replace with your own
-            apiKey: "demo-api-key",
-            authDomain: "quiz-sync-demo.firebaseapp.com",
-            databaseURL: "https://quiz-sync-demo-default-rtdb.firebaseio.com",
-            projectId: "quiz-sync-demo"
-        };
-        this.initFirebase();
+        this.useLocalStorage = true;
+        this.isListening = false;
+        console.log('QuizSync initialized with localStorage');
+        this.setupStorageListener();
     }
 
-    async initFirebase() {
-        // Initialize Firebase (in real implementation, load from CDN)
-        if (typeof firebase === 'undefined') {
-            // Fallback to localStorage for demo
-            this.useLocalStorage = true;
-            console.log('Using localStorage fallback for sync');
-            return;
-        }
-        
-        firebase.initializeApp(this.firebaseConfig);
-        this.database = firebase.database();
+    setupStorageListener() {
+        // Listen for storage changes across tabs/devices
+        window.addEventListener('storage', (e) => {
+            if (e.key && e.key.startsWith('quiz_session_') && e.newValue) {
+                const sessionId = e.key.replace('quiz_session_', '');
+                if (sessionId === this.sessionId) {
+                    console.log('Session data updated:', e.newValue);
+                    this.handleStorageUpdate(JSON.parse(e.newValue));
+                }
+            }
+        });
     }
 
     // Create a new quiz session
@@ -33,46 +29,51 @@ class QuizSync {
         this.sessionId = this.generateSessionId();
         this.isHost = true;
         
+        const user = this.getCurrentUser();
         const sessionData = {
-            host: this.getCurrentUser(),
+            host: user,
             created: Date.now(),
-            participants: {},
+            participants: { [user.id]: user },
             results: {},
-            status: 'waiting'
+            status: 'active',
+            lastUpdate: Date.now()
         };
 
-        if (this.useLocalStorage) {
-            localStorage.setItem(`quiz_session_${this.sessionId}`, JSON.stringify(sessionData));
-        } else {
-            await this.database.ref(`sessions/${this.sessionId}`).set(sessionData);
-        }
-
+        localStorage.setItem(`quiz_session_${this.sessionId}`, JSON.stringify(sessionData));
+        console.log('Session created:', this.sessionId, sessionData);
+        
+        this.startListening();
         return this.sessionId;
     }
 
     // Join an existing session
     async joinSession(sessionId) {
+        const sessionData = JSON.parse(localStorage.getItem(`quiz_session_${sessionId}`) || 'null');
+        
+        if (!sessionData) {
+            throw new Error('Session not found');
+        }
+        
         this.sessionId = sessionId;
         this.isHost = false;
-
-        const user = this.getCurrentUser();
         
-        if (this.useLocalStorage) {
-            const sessionData = JSON.parse(localStorage.getItem(`quiz_session_${sessionId}`) || '{}');
-            if (!sessionData.participants) sessionData.participants = {};
-            sessionData.participants[user.id] = user;
-            localStorage.setItem(`quiz_session_${sessionId}`, JSON.stringify(sessionData));
-        } else {
-            await this.database.ref(`sessions/${sessionId}/participants/${user.id}`).set(user);
-        }
-
+        const user = this.getCurrentUser();
+        sessionData.participants[user.id] = user;
+        sessionData.lastUpdate = Date.now();
+        
+        localStorage.setItem(`quiz_session_${sessionId}`, JSON.stringify(sessionData));
+        console.log('Joined session:', sessionId, user);
+        
         this.startListening();
         return true;
     }
 
     // Submit quiz results
     async submitResults(results) {
-        if (!this.sessionId) return;
+        if (!this.sessionId) {
+            console.log('No session ID, cannot submit results');
+            return;
+        }
 
         const user = this.getCurrentUser();
         const resultData = {
@@ -85,17 +86,16 @@ class QuizSync {
             answers: results.answers || []
         };
 
-        if (this.useLocalStorage) {
-            const sessionData = JSON.parse(localStorage.getItem(`quiz_session_${this.sessionId}`) || '{}');
-            if (!sessionData.results) sessionData.results = {};
-            sessionData.results[user.id] = resultData;
-            localStorage.setItem(`quiz_session_${this.sessionId}`, JSON.stringify(sessionData));
-            
-            // Trigger custom event for real-time updates
-            window.dispatchEvent(new CustomEvent('quizResultUpdate', { detail: resultData }));
-        } else {
-            await this.database.ref(`sessions/${this.sessionId}/results/${user.id}`).set(resultData);
-        }
+        const sessionData = JSON.parse(localStorage.getItem(`quiz_session_${this.sessionId}`) || '{}');
+        if (!sessionData.results) sessionData.results = {};
+        sessionData.results[user.id] = resultData;
+        sessionData.lastUpdate = Date.now();
+        
+        localStorage.setItem(`quiz_session_${this.sessionId}`, JSON.stringify(sessionData));
+        console.log('Results submitted:', resultData);
+        
+        // Update local display immediately
+        this.handleStorageUpdate(sessionData);
     }
 
     // Get all results from session
@@ -113,51 +113,70 @@ class QuizSync {
 
     // Start listening for real-time updates
     startListening() {
-        if (this.useLocalStorage) {
-            // Poll for changes every 2 seconds
-            this.pollInterval = setInterval(() => {
-                this.checkForUpdates();
-            }, 2000);
-            
-            // Listen for custom events
-            window.addEventListener('quizResultUpdate', (event) => {
-                this.onResultUpdate(event.detail);
-            });
-        } else {
-            this.database.ref(`sessions/${this.sessionId}/results`).on('child_added', (snapshot) => {
-                this.onResultUpdate(snapshot.val());
-            });
-        }
+        if (this.isListening) return;
+        
+        this.isListening = true;
+        console.log('Started listening for session:', this.sessionId);
+        
+        // Poll for changes every 1 second
+        this.pollInterval = setInterval(() => {
+            this.checkForUpdates();
+        }, 1000);
+        
+        // Initial load
+        this.checkForUpdates();
     }
 
-    // Check for updates (localStorage fallback)
+    // Check for updates
     checkForUpdates() {
         if (!this.sessionId) return;
         
         const sessionData = JSON.parse(localStorage.getItem(`quiz_session_${this.sessionId}`) || '{}');
         const currentResults = Object.values(sessionData.results || {});
         
-        if (currentResults.length !== this.results.length) {
+        // Check if results changed
+        const currentCount = currentResults.length;
+        const previousCount = this.results.length;
+        
+        if (currentCount !== previousCount || this.hasResultsChanged(currentResults)) {
+            console.log('Results updated:', currentResults);
+            this.results = currentResults;
+            this.updateResultsDisplay();
+            
+            // Show notification for new results
+            if (currentCount > previousCount) {
+                const newResult = currentResults[currentResults.length - 1];
+                if (newResult && newResult.userName !== this.getCurrentUser().name) {
+                    this.showNotification(`${newResult.userName} completed the quiz! Score: ${newResult.percentage}%`);
+                }
+            }
+        }
+    }
+    
+    // Check if results have changed
+    hasResultsChanged(newResults) {
+        if (newResults.length !== this.results.length) return true;
+        
+        for (let i = 0; i < newResults.length; i++) {
+            const newResult = newResults[i];
+            const oldResult = this.results.find(r => r.userId === newResult.userId);
+            if (!oldResult || oldResult.completedAt !== newResult.completedAt) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    // Handle storage updates from other tabs
+    handleStorageUpdate(sessionData) {
+        const currentResults = Object.values(sessionData.results || {});
+        if (this.hasResultsChanged(currentResults)) {
             this.results = currentResults;
             this.updateResultsDisplay();
         }
     }
 
-    // Handle new result updates
-    onResultUpdate(resultData) {
-        console.log('New result received:', resultData);
-        
-        // Update local results
-        const existingIndex = this.results.findIndex(r => r.userId === resultData.userId);
-        if (existingIndex >= 0) {
-            this.results[existingIndex] = resultData;
-        } else {
-            this.results.push(resultData);
-        }
-        
-        this.updateResultsDisplay();
-        this.showNotification(`${resultData.userName} completed the quiz! Score: ${resultData.percentage}%`);
-    }
+
 
     // Update the results display
     updateResultsDisplay() {
@@ -238,13 +257,12 @@ class QuizSync {
 
     // Stop listening
     stopListening() {
+        this.isListening = false;
         if (this.pollInterval) {
             clearInterval(this.pollInterval);
+            this.pollInterval = null;
         }
-        
-        if (!this.useLocalStorage && this.database) {
-            this.database.ref(`sessions/${this.sessionId}/results`).off();
-        }
+        console.log('Stopped listening');
     }
 }
 
