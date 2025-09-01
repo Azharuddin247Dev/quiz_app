@@ -12,7 +12,7 @@
     <div class="app-container">
         <header class="app-header">
             <div class="logo">
-                <h1>🧠 QuizMaster Pro created by Azharuddin</h1>
+                <h1>🧠 QuizMaster Pro</h1>
                 <p>Test Your Knowledge</p>
             </div>
             <div class="stats-bar">
@@ -54,6 +54,11 @@
                     <h3>Join Existing Session</h3>
                     <input type="text" id="session-id" placeholder="Enter Session ID" class="session-input">
                     <button onclick="joinSyncSession()" class="btn btn-primary">Join Session</button>
+                    
+                    <div style="margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 20px;">
+                        <h3>Create New Session (Host Only)</h3>
+                        <button onclick="showHostLogin()" class="btn btn-success">🔐 Host Login</button>
+                    </div>
                 </div>
             </div>
             
@@ -137,15 +142,28 @@
                     <div class="result-actions">
                         <button onclick="restartQuiz()" class="btn btn-primary">🔄 Play Again</button>
                         <button onclick="shareResults()" class="btn btn-secondary">📤 Share</button>
-                        <button onclick="createSyncSession()" class="btn btn-success">🔗 Create Sync Session</button>
+                        <button onclick="showHostLogin()" class="btn btn-success">🔗 Create Sync Session</button>
                     </div>
                 </div>
             </div>
         </main>
 
         <footer class="app-footer">
-            <p>&copy; 2025 QuizMaster Pro. Built with ❤️ by Azharuddin</p>
+            <p>&copy; 2024 QuizMaster Pro. Built with ❤️</p>
         </footer>
+    </div>
+    
+    <div id="host-login-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>🔐 Host Authentication</h3>
+            <p>Enter host credentials to create sync session</p>
+            <input type="text" id="host-userid" placeholder="User ID" class="auth-input">
+            <input type="password" id="host-password" placeholder="Password" class="auth-input">
+            <div class="modal-actions">
+                <button onclick="authenticateHost()" class="btn btn-primary">Login & Create Session</button>
+                <button onclick="closeHostLogin()" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
     </div>
     
     <div id="pause-modal" class="modal" style="display: none;">
